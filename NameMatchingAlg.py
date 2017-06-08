@@ -22,7 +22,7 @@ def acorns_alg(info):  # Using tuples seems pretty helpful for data storage
     certainty_scores = []
     for x in match:
         acorns_name, social, *email = x
-        certainty_scores.append(name_comparison("5457c89da0536d48221ae2659e479568", acorns_name, name))
+        certainty_scores.append(name_comparison("5457c89da0536d48221ae2659e479568", acorns_name, name)["score"])
     maximum_score = max(certainty_scores) # Get the maximum score
     return acorns_data[match[certainty_scores.index(maximum_score)]]
 
