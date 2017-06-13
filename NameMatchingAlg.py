@@ -1,8 +1,11 @@
-from MockData import e_data, acorns_data
 from rosette.api import API, NameSimilarityParameters, RosetteException
 
 api_key = "5457c89da0536d48221ae2659e479568"
 
+# Test data
+e_data = [("John Doe", 1234, "johndoe@gmail.com"), ("Elizabeth Jane", 5678), ("Spiderman", 1234, "spiderman@gmail.com")]
+acorns_data = {("Johnny Doe", 1234): "Johnny's id", ("Liz Jane", 5678): "Liz's id",("Spiderman", 1234): "Spiderman's id"
+    , ("Jonathan Doe", 1234): "Jonathan's id"}
 
 def name_comparison(key, acorns_name, name):
     """Return similarity score between two names using Rosette API."""
@@ -18,7 +21,7 @@ def name_comparison(key, acorns_name, name):
 
 def acorns_alg(info):  # Using tuples seems pretty helpful for data storage
     """Matches employers' data to Acorns accounts using first and last
-        name, last four digits of social and optional email. 
+        name, last four digits of social and optional email.
         Returns matched ID and a score between 0 and 1 representing the confidence
         level of the match."""
     name, social, *email = info
