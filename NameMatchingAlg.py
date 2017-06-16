@@ -1,11 +1,11 @@
+import csv
+from .table import Database
 from rosette.api import API, NameSimilarityParameters, RosetteException
 
 api_key = "5457c89da0536d48221ae2659e479568"
 
 # Test data
-e_data = [("John Doe", 1234, "johndoe@gmail.com"), ("Elizabeth Jane", 5678), ("Spiderman", 1234, "spiderman@gmail.com")]
-acorns_data = {("Johnny Doe", 1234): "Johnny's id", ("Liz Jane", 5678): "Liz's id",("Spiderman", 1234): "Spiderman's id"
-    , ("Jonathan Doe", 1234): "Jonathan's id"}
+acorns_data = {("Johnny Doe", 1234): "Johnny's id", ("Liz Jane", 5678): "Liz's id", ("Spiderman", 1234): "Spiderman's id", ("Jonathan Doe", 1234): "Jonathan's id"}
 
 def name_comparison(key, acorns_name, name):
     """Return similarity score between two names using Rosette API."""
@@ -19,13 +19,14 @@ def name_comparison(key, acorns_name, name):
         print(e)
 
 
-def acorns_alg(info):  # Using tuples seems pretty helpful for data storage
+def acorns_alg(info):
     """Matches employers' data to Acorns accounts using first and last
         name, last four digits of social and optional email.
         Returns matched ID and a score between 0 and 1 representing the confidence
         level of the match."""
     name, social, *email = info
-    match = [key for key in acorns_data if social in key]  # Social should be only certain constant between data
+    social = int(social)
+    match = [user for user in acorns_data.keys() if social in user]  # Social should be only certain constant between data
     certainty_scores = []
     for acorns_info in match:
         acorns_name, acorns_social, *acorns_email = acorns_info
@@ -36,12 +37,14 @@ def acorns_alg(info):  # Using tuples seems pretty helpful for data storage
     return {"id": acorns_data[match[certainty_scores.index(maximum_score)]], "score": maximum_score} # Return the ID and accuracy of the search as a dictionary
 
 
-def directory_to_id(data):
+def directory_to_id():
     """Go through a company's employee directory and return dictionary of employee's info to Acorns IDs."""
     info_to_id = dict()
-    for info in data:
-        info_to_id[info] = acorns_alg(info)["id"]
+    with open('data.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in reader:
+            info_to_id[tuple(row)] = acorns_alg(row)["id"]
     return info_to_id
 
 if __name__ == "__main__":
-    print(directory_to_id(e_data))
+    print(directory_to_id())
