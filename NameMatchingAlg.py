@@ -1,10 +1,9 @@
 import csv
-from .table import Database
 from rosette.api import API, NameSimilarityParameters, RosetteException
 
 api_key = "5457c89da0536d48221ae2659e479568"
 
-# Test data
+# Test database
 acorns_data = {("Johnny Doe", 1234): "Johnny's id", ("Liz Jane", 5678): "Liz's id", ("Spiderman", 1234): "Spiderman's id", ("Jonathan Doe", 1234): "Jonathan's id"}
 
 def name_comparison(key, acorns_name, name):
@@ -37,14 +36,15 @@ def acorns_alg(info):
     return {"id": acorns_data[match[certainty_scores.index(maximum_score)]], "score": maximum_score} # Return the ID and accuracy of the search as a dictionary
 
 
-def directory_to_id():
+def directory_to_id(csvfile):
     """Go through a company's employee directory and return dictionary of employee's info to Acorns IDs."""
     info_to_id = dict()
-    with open('data.csv', 'r') as csvfile:
+    with open(csvfile, 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in reader:
             info_to_id[tuple(row)] = acorns_alg(row)["id"]
     return info_to_id
 
 if __name__ == "__main__":
-    print(directory_to_id())
+    csvfile = input("Enter the name of a CSV file structured with rows as Full Name, last four Digits of SSN and an optional email: ")
+    print(directory_to_id(csvfile))
